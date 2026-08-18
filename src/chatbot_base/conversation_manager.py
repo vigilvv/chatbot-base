@@ -37,5 +37,5 @@ class ConversationManager:
             max_tokens = max_tokens if max_tokens is not None else self.max_tokens
         )
 
-        return response.choices[0].message.content
+        return {"message": response.choices[0].message.content, "total_tokens": response.usage.total_tokens, "finish_reason": response.choices[0].finish_reason}
 
