@@ -9,5 +9,11 @@ def main():
     print(f"Total tokens = {response["total_tokens"]}")
     print(f"Finish reason = {response["finish_reason"]}")
 
+    print(f"\n\n {'='*50} \n\n")
+
+    response = conv_manager.chat_completion("what was the name of this invention?")
+    
+    print(response["message"])
+
 if __name__ == "__main__":
     main()

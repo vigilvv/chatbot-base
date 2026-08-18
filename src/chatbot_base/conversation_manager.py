@@ -18,24 +18,21 @@ class ConversationManager:
         self.temperature = temperature if temperature is not None else DEFAULT_TEMPERATURE
         self.max_tokens =  max_tokens if max_tokens is not None else DEFAULT_MAX_TOKENS
         self.system_prompt = system_prompt or DEFAULT_SYSTEM_PROMPT
+        self.conversation_history = [{"role": "system", "content": self.system_prompt}]
 
     def chat_completion(self, user_prompt, temperature=None, max_tokens=None):
-        messages = [
-                        {
-                            "role": "system", 
-                            "content": self.system_prompt
-                        }, 
-                        {   "role": "system", 
-                            "content": user_prompt
-                         }
-                    ]
+
+        self.conversation_history.append({"role": "user", "content": user_prompt})
 
         response = self.client.chat.completions.create(
             model = self.model,
-            messages = messages,
+            messages = self.conversation_history,
             temperature = temperature if temperature is not None else self.temperature,
             max_tokens = max_tokens if max_tokens is not None else self.max_tokens
         )
 
-        return {"message": response.choices[0].message.content, "total_tokens": response.usage.total_tokens, "finish_reason": response.choices[0].finish_reason}
+        message = response.choices[0].message.content
+        self.conversation_history.append({"role": "assistant", "content": message})
+
+        return {"message": message, "total_tokens": response.usage.total_tokens, "finish_reason": response.choices[0].finish_reason}
 
