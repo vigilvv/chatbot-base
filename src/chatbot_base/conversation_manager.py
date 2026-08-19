@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
-
+from chatbot_base.token_estimator import total_tokens_used
 load_dotenv()
 
 DEFAULT_API_KEY = os.environ.get("DEFAULT_API_KEY")
@@ -33,6 +33,8 @@ class ConversationManager:
 
         message = response.choices[0].message.content
         self.conversation_history.append({"role": "assistant", "content": message})
+        
+        print(f"Totak tokens used: {total_tokens_used(self.model, self.conversation_history)}")
 
         return {"message": message, "total_tokens": response.usage.total_tokens, "finish_reason": response.choices[0].finish_reason}
 
